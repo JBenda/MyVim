@@ -1,0 +1,13 @@
+[submodule "cquery"]
+	path = cquery
+	url = https://github.com/cquery-project/cquery.git
+	shallow = true
+[submodule "tabnine-vim"]
+	path = tabnine-vim
+	url = https://github.com/zxqfl/tabnine-vim
+	shallow = true
+[submodule "pack/bundle/start/vim-grammarous"]
+	path = pack/bundle/start/vim-grammarous
+	url = github.com:rhysd/vim-grammarous.git
+[submodule "vim-grammarous"]
+	shallow = true

@@ -1,0 +1,31 @@
+snippet date
+${2:${1:`date +%d`}.`date +%m`}.`date +%Y`
+endsnippet
+
+snippet /@ "doxygen comment auto correction"
+/**
+ *	@brief ${1} `!p 
+import re
+if snip.v.text:
+	v = re.sub("\\n", "", snip.v.text)
+	vs = re.search("\\((.*)\\)", v)
+	snip.rv += "failed to pares"
+	if vs:
+		ls = re.findall("\w[^,]*", vs.group(1));
+		res =list(map(lambda s: re.search("(\w+)\s*$", s).group(1), ls))
+		for p in res:
+			snip += " *\t@param " + p`
+*/
+${VISUAL}
+endsnippet
+
+snippet class "default class declaration" 
+class $1 `!p if not snip.c and t[2]: snip.rv = ': public'` $2{
+	$0
+} ;
+endsnippet
+
+snippet /- "divider"
+//--------------------------------------------------------------------------
+
+endsnippet
