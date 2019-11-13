@@ -14,7 +14,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=release -DCMAKE_EXPOR
 cmake --build .
 cmake --build . --target install
   ```
-2. add `cquery/build/bin/` to path 
+2. add `cquery/build/release/bin/` to path 
 
 ### [tabnine-vim](https://tabnine.com/)
 
