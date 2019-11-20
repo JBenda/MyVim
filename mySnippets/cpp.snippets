@@ -9,14 +9,17 @@ import re
 if snip.v.text:
 	v = re.sub("\\n", "", snip.v.text)
 	vs = re.search("\\((.*)\\)", v)
-	snip.rv += "failed to pares"
 	if vs:
 		ls = re.findall("\w[^,]*", vs.group(1));
 		res =list(map(lambda s: re.search("(\w+)\s*$", s).group(1), ls))
 		for p in res:
-			snip += " *\t@param " + p`
-*/
-${VISUAL}
+			snip += " *\t@param " + p
+	else:
+		snip.rv += "failed to pares"`
+*/`!p 
+if snip.v.text:
+	snip += snip.v.text
+`
 endsnippet
 
 snippet class "default class declaration" 

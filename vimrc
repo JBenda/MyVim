@@ -6,6 +6,7 @@
 :set number
 :set autoindent
 :set colorcolumn=81
+:set nofoldenable
 " :au BufRead,BufNewFile *.cc\|*.h\|*.hxx setfiletype cpp
 
 " Grammerous config
@@ -37,9 +38,9 @@ call plug#end()
 let g:lsp_highlight_references_enabled = 0
 let g:lsp_signs_enabled = 0
 let g:lsp_diagnostics_echo_cursor = 0
-set foldmethod=expr
-	\ foldexpr=lsp#ui#vim#folding#foldexpr()
-	\ foldtext=lsp#ui#vim#folding#foldtext()
+
+set foldmethod=syntax
+
 
 if executable('cquery')
 	 au User lsp_setup call lsp#register_server({
