@@ -2,6 +2,12 @@ snippet date
 ${2:${1:`date +%d`}.`date +%m`}.`date +%Y`
 endsnippet
 
+snippet "name(space)?" "namespace" br
+namespace $1 {
+	$0
+} // end namespace $1
+endsnippet
+
 snippet /@ "doxygen comment auto correction"
 /**
  *	@brief ${1} `!p 
@@ -16,9 +22,9 @@ if snip.v.text:
 			snip += " *\t@param " + p
 	else:
 		snip.rv += "failed to pares"`
-*/`!p 
+ */`!p 
 if snip.v.text:
-	snip += snip.v.text
+	snip += re.sub("^\s*", "", snip.v.text)
 `
 endsnippet
 
