@@ -5,5 +5,4 @@
 [submodule "pack/bundle/start/vim-grammarous"]
 	path = pack/bundle/start/vim-grammarous
 	url = github.com:rhysd/vim-grammarous.git
-[submodule "vim-grammarous"]
 	shallow = true
