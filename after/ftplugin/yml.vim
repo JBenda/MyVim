@@ -1,1 +1,2 @@
 :setlocal smarttab
+:setlocal expandtab

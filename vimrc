@@ -9,7 +9,16 @@
 :set nofoldenable
 :set spell
 :set completeopt=menuone,noselect,noinsert
+:set backspace=indent
 " :au BufRead,BufNewFile *.cc\|*.h\|*.hxx setfiletype cpp
+
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+let g:netrw_winsize = 25
+
+
 
 " Grammerous config
 :let g:grammarous#default_comments_only_filetypes = {
@@ -37,9 +46,9 @@ call plug#end()
 set foldmethod=syntax
 
 
-let g:lsp_highlight_references_enabled = 0
-let g:lsp_signs_enabled = 0
-let g:lsp_diagnostics_echo_cursor = 0
+let g:lsp_highlight_references_enabled = 1
+let g:lsp_signs_enabled = 1
+let g:lsp_diagnostics_echo_cursor = 1
 
 if executable('cquery')
 	 au FileType cpp setlocal omnifunc=lsp#complete
@@ -84,6 +93,7 @@ endif
 
 :nmap <f12> <Plug>(lsp-definition)
 :nmap <S-f12> <Plug>(lsp-type-definition)
+:nmap <f3> <Plug>(lsp-hover)
 :autocmd FileType c,cc,cpp,cxx,h,hpp nnoremap <C-f12> :LspCqueryBase<CR>
 :nmap <f2>  <Plug>(lsp-rename)
 
