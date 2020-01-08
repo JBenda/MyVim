@@ -18,6 +18,7 @@ let g:netrw_browse_split = 4
 let g:netrw_altv = 1
 let g:netrw_winsize = 25
 
+let s:CXX_Whitlist = [ 'cpp', 'hpp', 'cc', 'h' ]
 
 
 " Grammerous config
@@ -35,11 +36,9 @@ let g:netrw_winsize = 25
 call plug#begin('~/.vim/plugged')
 Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
-Plug 'pdavydov108/vim-lsp-cquery'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
-"Plug 'thomasfaingnaert/vim-lsp-snippets'
-"Plug 'thomasfaingnaert/vim-lsp-ultisnips'
+Plug 'jackguo380/vim-lsp-cxx-highlight', { 'for': ['cpp'] }
 call plug#end()
 
 
@@ -56,8 +55,12 @@ if executable('cquery')
 			\ 'name': 'cquery',
 			\ 'cmd': {server_info->['cquery']},
 			\ 'root_uri': {server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'compile_commands.json'))},
-			\ 'initialization_options': {'cacheDirectory': lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'compile_commands.json') . '/.cquery_cache'},
-			\ 'whitelist': ['c', 'cpp', 'objc', 'objcpp', 'cc', 'h', 'hpp'],
+			\ 'initialization_options': {
+	 		\ 'cacheDirectory': lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'compile_commands.json') . '/.cquery_cache',
+	 		\ 'highlight': { 'enabled': v:true},
+	 		\	'emitInactiveRegions': v:true
+	 		\ },
+			\ 'whitelist': s:CXX_Whitlist + ['c', 'objc', 'objcpp'],
 			\ })
 endif 
 
@@ -89,13 +92,66 @@ endif
 :	
 :endfunction
 
+function LspCxxHlInfo()
+    let l:line = line('.')
+    let l:col = col('.')
+
+		let l:hit = 0
+    for l:sym in get(b:, 'lsp_cxx_hl_symbols', [])
+        let l:under_cursor = 0
+
+        let l:pos = []
+
+        for l:range in get(l:sym, 'ranges', [])
+            let l:pos += lsp_cxx_hl#match#lsrange2match(l:range)
+        endfor
+
+        if has('byte_offset')
+            for l:offset in get(l:sym, 'offsets', [])
+                let l:pos += lsp_cxx_hl#match#offsets2match(l:offset)
+            endfor
+        endif
+
+        for l:p in l:pos
+            if type(l:p) ==# type(0) && l:line == l:p
+                let l:under_cursor = 1
+            elseif type(l:p) ==# type([])
+                if len(l:p) == 1 && l:line == l:p[0]
+                    let l:under_cursor = 1
+                elseif len(l:p) == 2 && l:line == l:p[0] && l:col == l:p[1]
+                    let l:under_cursor = 1
+                elseif len(l:p) == 3 && l:line == l:p[0] && l:p[1] <= l:col
+                            \ && l:col <= (l:p[1] + l:p[2])
+                    let l:under_cursor = 1
+                endif
+            endif
+        endfor
+
+        if l:under_cursor
+					let l:hit = 1
+					echon 'kind: '
+					echon get(l:sym, 'kind', '')
+					let l:storage = get(l:sym, 'storage', '')
+					if ! (l:storage ==# "None")
+						echon ' ' . get(l:sym, 'storage', '') 
+					endif
+					echon '    parentKind: '
+					echon get(l:sym, 'parentKind', '')
+        endif
+    endfor
+		if !l:hit
+			echon 'No Symbole'
+		endif
+endfunction
+nmap <silent><Plug>(lsp-symbol-info)  :<C-U>call LspCxxHlInfo()<CR>
+
 :autocmd FileType cpp call CppIncludePath() 
 
 :nmap <f12> <Plug>(lsp-definition)
 :nmap <S-f12> <Plug>(lsp-type-definition)
 :nmap <f3> <Plug>(lsp-hover)
-:autocmd FileType c,cc,cpp,cxx,h,hpp nnoremap <C-f12> :LspCqueryBase<CR>
 :nmap <f2>  <Plug>(lsp-rename)
+:nmap <f1> <Plug>(lsp-symbol-info)
 
 let g:UltiSnipsExpandTrigger="<c-t>"
 :nmap <S-tab> :call UltiSnips#ListSnippets()<CR>
@@ -104,4 +160,12 @@ let g:UltiSnipsJumpForwardTrigger="OF"
 " pos
 let g:UltiSnipsJumpBackwardTrigger="OH"
 let g:UltiSnipsSnippetDirectories=["UltiSnips", $HOME."/.vim/mySnippets"]
+
+" cxx_hl
+let g:lsp_cxx_hl_ft_whitlist = s:CXX_Whitlist 
+
+" lsp log
+"let g:lsp_log_verbose = 1
+"let g:lsp_log_file = expand('~/vim-lsp.log')
+
 
