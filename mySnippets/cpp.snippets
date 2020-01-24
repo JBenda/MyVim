@@ -8,21 +8,29 @@ namespace $1 {
 } // end namespace $1
 endsnippet
 
+snippet p "just print visual"
+${VISUAL}
+endsnippet
+
 snippet /@ "doxygen comment auto correction"
 /**
  *	@brief ${1} `!p 
 import re
+
+def extract(match):
+	ls = re.findall("\w[^,]*", match.group(1));
+	return list(filter(lambda s: bool(s), map(lambda s: re.search("(\w+)\s*$", s).group(1) if s else '', ls)))
+
 if snip.v.text:
 	v = re.sub("\\n", "", snip.v.text)
-	pa = re.search("\\((.*)\\)", v)
+	templ = re.search("template\\s*<([^()]+)>", v)
+	pa = re.search("\\((.+)\\)", v)
 	if pa:
-		# arguments
-		ls = re.findall("\w[^,]*", pa.group(1));
-		res =list(map(lambda s: re.search("(\w+)\s*$", s).group(1), ls))
-		for p in res:
+		for p in extract(pa):
 			snip += " *\t@param " + p
-	else:
-		snip.rv += "failed to pares"`
+	if templ:
+		for p in extract(templ):
+			snip += " *\t@tparam " + p`
  */`!p 
 if snip.v.text:
 	snip += re.sub("^\s*", "", snip.v.text)

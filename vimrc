@@ -10,6 +10,9 @@
 :set spell
 :set completeopt=menuone,noselect,noinsert
 :set backspace=indent
+:set wildmenu
+:set wildmode=longest:full,full
+:hi  SpellBad cterm=underline ctermfg=1 ctermbg=None
 " :au BufRead,BufNewFile *.cc\|*.h\|*.hxx setfiletype cpp
 
 let g:netrw_banner = 0
@@ -27,8 +30,16 @@ let s:CXX_Whitlist = [ 'cpp', 'hpp', 'cc', 'h' ]
 	\ }
 :let g:grammarous#use_vim_spelllang = 1
 :let g:grammarous#show_first_error = 1
-:nmap <c-w>i <Plug>(grammarous-move-to-info-window)
-:nmap <c-n> <Plug>(grammarous-move-to-next-error)
+
+function MoveToNextError()
+	if exists('b:grammarous_result')
+		call grammarous#move_to_next_error(getpos('.')[1 : 2], b:grammarous_result)
+	else
+		call lsp#ui#vim#diagnostics#next_diagnostic()	
+	endif
+endfunction
+nmap <silent><Plug>(util-next-error)  :<C-U>call MoveToNextError()<CR>
+
 
 " unicodes
 " :imap -> →<space>
@@ -144,14 +155,25 @@ function LspCxxHlInfo()
 		endif
 endfunction
 nmap <silent><Plug>(lsp-symbol-info)  :<C-U>call LspCxxHlInfo()<CR>
+nmap <silent><Plug>(lsp-hi-refresh) :<C-U>LspCxxHighlight<CR>
 
 :autocmd FileType cpp call CppIncludePath() 
 
 :nmap <f12> <Plug>(lsp-definition)
-:nmap <S-f12> <Plug>(lsp-type-definition)
-:nmap <f3> <Plug>(lsp-hover)
+:nmap <S-f12> <Plug>(lsp-declaration)
+:nmap <f5>  <Plug>(lsp-hi-refresh)
 :nmap <f2>  <Plug>(lsp-rename)
+:nmap <f3> <Plug>(lsp-hover)
 :nmap <f1> <Plug>(lsp-symbol-info)
+
+" identify highlight group 
+map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
+:nmap <c-w>i <Plug>(grammarous-move-to-info-window)
+
+:nmap <c-n> <Plug>(util-next-error)
 
 let g:UltiSnipsExpandTrigger="<c-t>"
 :nmap <S-tab> :call UltiSnips#ListSnippets()<CR>
@@ -168,7 +190,3 @@ let g:lsp_cxx_hl_ft_whitlist = s:CXX_Whitlist
 "let g:lsp_log_verbose = 1
 "let g:lsp_log_file = expand('~/vim-lsp.log')
 
-" identify highlight group 
-map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>

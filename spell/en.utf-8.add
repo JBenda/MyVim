@@ -84,3 +84,10 @@ ConcurrentFiller
 mutex
 NOLINT
 variadic
+serializer
+CMakeLists
+txt
+#ookStore
+JBenda
+nullopt
+BookStoreManager

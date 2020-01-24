@@ -1,1 +1,1 @@
-:so yml.vim
+:ru after/ftplugin/yml.vim
